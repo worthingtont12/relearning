@@ -39,11 +39,7 @@ for i = 1:num_episodes
         state_index = find(all(repmat(state,length(stateSpace),1) == stateSpace, 2));
         next_state_index = find(all(repmat(next_state,length(stateSpace),1) == stateSpace, 2));
         % %visit state and collect rewards
-        if j < (length(statesFromEpisodes{i})-1)
-            next_reward = rewardsFromEpisodes{i}((j+1));
-        else
-            next_reward = 0;
-        end
+        next_reward = rewardsFromEpisodes{i}((j));
         % % Determine value function for state
         %v(st) = v(st) + alpha*(Rt+1 + (gamma)*(vst+1) - v(st))
         next_v = v_pi(next_state_index);
