@@ -33,7 +33,6 @@ for i = 1:numIterations
     terminal = false;
 
     %initalize state
-    initialStates = [2,7]
     state = initialStates;
     state_index = find(all(repmat(state,length(stateSpace),1) == stateSpace, 2));
     %choose action that uses policy derived from Q(epislon-greedy)
@@ -46,18 +45,22 @@ for i = 1:numIterations
     %otherwise pick action that maximizes action value function
     else
         action = (find(Q(state_index,:) == max(Q(state_index,:))));
+        if length(action) > 1
+            action_index = randi(length(action));
+            action = action(action_index);
+        end
     end
 
     % for each step in episode
     while terminal == false
         %increment step counter
-        steps(i) = steps(i) + 1
+        steps(i) = steps(i) + 1;
 
         %state index
         state_index = find(all(repmat(state,length(stateSpace),1) == stateSpace, 2));
 
         %take action observe reward and next state
-        takeAction = @takeAction_windyGrid;
+
         [next_state, reward] = takeAction(state, action);
         next_state_index = find(all(repmat(next_state,length(stateSpace),1) == stateSpace, 2));
 
@@ -69,6 +72,10 @@ for i = 1:numIterations
         %otherwise pick action that maximizes action value function
         else
             next_action = (find(Q(next_state_index,:) == max(Q(next_state_index,:))));
+            if length(next_action) > 1
+                next_action_index = randi(length(next_action));
+                next_action = next_action(next_action_index);
+            end
         end
         % % Determine action value function for state
         %Q(s,a) <- Q(s,a) + alpha(reward + gamma(Q(s',a') - Q(s,a)))
@@ -85,6 +92,7 @@ for i = 1:numIterations
         %is state terminal?
         if state == terminalStates
             terminal = true;
+        end
     end
 end
 end
