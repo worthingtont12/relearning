@@ -21,7 +21,7 @@ function [Q, policy, steps] = QLambda(stateSpace, initialStates, ...
 % Your code
 %%%%%%%%%%%
 % initalize policy
-policy = initialPolicy;
+policy = initialPolicy
 %initalize action value function
 Q = zeros(70,4);
 
@@ -109,12 +109,13 @@ for i = 1:numIterations
         end
 
         %update policy
-        for j = 1:length(stateSpace)
-            action_set = Q(j,:);
-            numerator = (action_set == max(action_set));
-            policy(j,:) = numerator/sum(numerator);
-        end
-
+        %for j:
+        % if policy(i,j) = max(
+        %     policy(i,j) = 1
+        % else
+        %     policy(i,j) = 0
+        %
+        % policy(i,j) = policy(i,j)/sum(policy(i,:))
         %update state and actions
         state = next_state;
         action = next_action;

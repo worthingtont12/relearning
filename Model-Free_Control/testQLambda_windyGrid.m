@@ -14,7 +14,7 @@ initialPolicy = 0.25 * ones(70,4);
 % Q(0.5)
 [Q_q05, policy_q05, steps_q05] = ...
         QLambda(stateSpace, [1,4],[8,4], @takeAction_windyGrid, ...
-        initialPolicy, numIterations, gamma, alpha, 0.5, epsilon);
+        initialPolicy, numIterations, gamma, alpha, 0.9, epsilon);
 
 min_steps = min(steps_q05);
 fprintf('Q(0.5): length of optimal path is %2d\n',min_steps)

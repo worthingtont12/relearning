@@ -67,7 +67,7 @@ for i = 1:numIterations
         %choose a' from using policy derived from Q(epislon-greedy)
         %if probability below epsilon then pick random action
         probability =rand;
-        if probability <= .1
+        if probability <= epsilon
             next_action = randi(length(Q(next_state_index,:)));
         %otherwise pick action that maximizes action value function
         else
@@ -88,7 +88,12 @@ for i = 1:numIterations
         %update state and actions
         state = next_state;
         action = next_action;
-
+        
+       for j = 1:length(stateSpace)
+            action_set = Q(j,:);
+            numerator = (action_set == max(action_set));
+            policy(j,:) = numerator/sum(numerator);
+       end
         %is state terminal?
         if state == terminalStates
             terminal = true;
