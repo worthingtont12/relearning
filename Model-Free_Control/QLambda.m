@@ -97,7 +97,7 @@ for i = 1:numIterations
         %for s and a
         % % Determine action value function for state
         for s = 1:length(stateSpace)
-            for a = 1:4
+            for a = 1:length(Q(s,:))
                 Q(s, a) = (Q(s, a) + ((alpha)*(delta)*(Z(s, a))));
 
                 if next_action == optimal_next_action

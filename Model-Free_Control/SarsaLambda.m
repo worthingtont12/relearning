@@ -16,7 +16,6 @@ function [Q, policy, steps] = SarsaLambda(stateSpace, initialStates, ...
 %          policy - matrix containing the probabilities for taking each
 %                   action at each state
 %          steps - vector, stores number of steps in each episode
-
 %%%%%%%%%%%
 % Your code
 %%%%%%%%%%%
@@ -31,10 +30,14 @@ steps = zeros(numIterations,1);
 
 for i = 1:numIterations
     terminal = false;
+    %trace
+    E = zeros(70,4);
 
     %initalize state
     state = initialStates;
     state_index = find(all(repmat(state,length(stateSpace),1) == stateSpace, 2));
+
+    %Wasn't clear how actions should be initialized so I used epsilon greedy
     %choose action that uses policy derived from Q(epislon-greedy)
     %generate a random probability between 1-0
     probability =rand;
@@ -60,7 +63,6 @@ for i = 1:numIterations
         state_index = find(all(repmat(state,length(stateSpace),1) == stateSpace, 2));
 
         %take action observe reward and next state
-
         [next_state, reward] = takeAction(state, action);
         next_state_index = find(all(repmat(next_state,length(stateSpace),1) == stateSpace, 2));
 
@@ -77,23 +79,34 @@ for i = 1:numIterations
                 next_action = next_action(next_action_index);
             end
         end
-        % % Determine action value function for state
-        %Q(s,a) <- Q(s,a) + alpha(reward + gamma(Q(s',a') - Q(s,a)))
-        next_q = Q(next_state_index, next_action);
-        q = (Q(state_index, action) + (((alpha)*((reward) + (gamma)*(next_q) - Q(state_index, action)))));
 
-        %update q_pi
-        Q(state_index, action) = q;
+        % Determine action value function for next state
+        next_q = Q(next_state_index, next_action);
+        %TD error
+        delta = (reward + (gamma)*(next_q) - Q(state_index, action));
+
+        %increment trace
+        E(state_index, action) = E(state_index, action) + 1;
+
+        %update q_pi over all s and a
+        for s = 1:length(stateSpace)
+            for a = 1:length(Q(s,:))
+                Q(s, a) = (Q(s, a) + ((alpha)*(delta)*(E(s, a))));
+                E(s,a) = (gamma)*(lambda)*(E(s,a));
+            end
+        end
 
         %update state and actions
         state = next_state;
         action = next_action;
-        
+
+        %update policy
        for j = 1:length(stateSpace)
             action_set = Q(j,:);
             numerator = (action_set == max(action_set));
             policy(j,:) = numerator/sum(numerator);
        end
+
         %is state terminal?
         if state == terminalStates
             terminal = true;
